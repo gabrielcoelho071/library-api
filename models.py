@@ -1,12 +1,13 @@
 from sqlalchemy import create_engine, Column, String, Integer, ForeignKey
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base, relationship
 
+#configurar a conexão de banco
 engine = create_engine("sqlite:///banco.db")
-db_session = scoped_session(sessionmaker(bind=engine))
+
+local_session = sessionmaker(bind=engine)
 
 Base = declarative_base()
-Base.query = db_session.query_property()
-
+# Base.query = db_session.query_property()
 
 class Livro(Base):
     __tablename__ = 'livros'
@@ -19,13 +20,21 @@ class Livro(Base):
     def __repr__(self):
         return f'<Livro(Título={self.titulo}, id{self.id_livro})>'
 
-    def save(self):
-        db_session.add(self)
-        db_session.commit()
+    def save(self, db_session):
+        try:
+            db_session.add(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise
 
-    def delete(self):
-        db_session.delete(self)
-        db_session.commit()
+    def delete(self, db_session):
+        try:
+            db_session.delete(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise
 
     def serialize(self):
         var_livro = {
@@ -48,13 +57,21 @@ class Usuario(Base):
     def __repr__(self):
         return f'<Usuário(nome={self.nome}, id{self.id_usuario})>'
 
-    def save(self):
-        db_session.add(self)
-        db_session.commit()
+    def save(self, db_session):
+        try:
+            db_session.add(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise
 
-    def delete(self):
-        db_session.delete(self)
-        db_session.commit()
+    def delete(self, db_session):
+        try:
+            db_session.delete(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise
 
     def serialize(self):
         var_usuario = {
@@ -79,13 +96,21 @@ class Emprestimo(Base):
     def __repr__(self):
         return f'<Empréstimo(livro={self.livro_id}, usuario{self.usuario_id})>'
 
-    def save(self):
-        db_session.add(self)
-        db_session.commit()
+    def save(self, db_session):
+        try:
+            db_session.add(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise
 
-    def delete(self):
-        db_session.delete(self)
-        db_session.commit()
+    def delete(self, db_session):
+        try:
+            db_session.delete(self)
+            db_session.commit()
+        except:
+            db_session.rollback()
+            raise
 
     def serialize(self):
         var_emprestimo = {
