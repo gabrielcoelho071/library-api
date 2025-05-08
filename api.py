@@ -139,7 +139,7 @@ def editar_livro(id_livro):
         livro.resumo = resumo
 
         # Save changes to the database
-        livro.save()
+        livro.save(db_session)
         return jsonify({"mensagem": "Livro atualizado com sucesso!"})
     except ValueError:
         return jsonify({"mensagem": "Formato inválido."}), 400
@@ -156,7 +156,7 @@ def deletar_livro(id_livro):
     try:
         var_livro = select(Livro).where(Livro.id_livro == id_livro)
         var_livro = db_session.execute(var_livro).scalar()
-        var_livro.delete()
+        var_livro.delete(db_session)
         return jsonify({"mensagem": "Livro deletado com sucesso!"})
     except ValueError:
         return jsonify({"mensagem": "Formato inválido."}), 400
@@ -193,20 +193,20 @@ def cadastrar_usuario():
             return jsonify({'result': 'Error. Integrity Error (faltam informações) '}), 400
         else:
             cpf_f = '{0}.{1}.{2}-{3}'.format(cpf[:3], cpf[3:6], cpf[6:9], cpf[9:])
-            usuario = select(Usuario).where(Usuario.CPF == cpf_f)
-            print(usuario)
-            usuario = db_session.execute(usuario).scalars()
-            if usuario:
-                raise TypeError
-            else:
-                post = Usuario(nome=nome, CPF=cpf_f, endereco=endereco)
-                post.save(db_session)
-                db_session.close()
-                return jsonify({'result': 'Usuario criado com sucesso!'}), 200
+            post = Usuario(nome=nome, CPF=cpf_f, endereco=endereco)
+            post.save(db_session)
+            db_session.close()
+            return jsonify({'mensagem': 'Usuario criado com sucesso!'}), 200
     except ValueError:
         return jsonify({"mensagem": "formato invalido"})
     except IntegrityError:
         return jsonify({"mensagem": "CPF inválido"})
+    except TypeError:
+        return jsonify({'mensagem': 'Error. Integrity Error (faltam informações ou informações corretas) '}), 400
+    except Exception as e:
+        return jsonify({"mensagem": str(e)}), 500
+    finally:
+        db_session.close()
 
 @app.route('/usuarios', methods=['GET'])
 def listar_usuario():
@@ -268,13 +268,13 @@ def editar_usuario(id_usuario):
         usuario.CPF = CPF
         usuario.endereco = endereco
 
-        # Save changes to the database
-        usuario.save()
-        return jsonify({"mensagem": "usuario atualizado com sucesso!"})
+        usuario.save(db_session)
+        return jsonify({'result': 'Usuario editado com sucesso!'}), 200
+
     except ValueError:
         return jsonify({"mensagem": "Formato inválido."}), 400
     except TypeError:
-        return jsonify({'result': 'Error. Integrity Error (faltam informações ou informações corretas) '}), 400
+        return jsonify({'mensagem': 'Error. (faltam informações ou informações corretas)'}), 400
     except Exception as e:
         return jsonify({"mensagem": str(e)}), 500
     finally:
@@ -286,7 +286,7 @@ def deletar_usuario(id_usuario):
     try:
         var_usuario = select(Usuario).where(Usuario.id_usuario == id_usuario)
         var_usuario = db_session.execute(var_usuario).scalar()
-        var_usuario.delete()
+        var_usuario.delete(db_session)
 
         return jsonify({"mensagem": "usuario deletado com sucesso!"})
     except ValueError:
@@ -424,25 +424,26 @@ def editar_emprestimo(id_emprestimo):
 
         dados_emprestimo = request.get_json()
         # Captura os valores dos campos do formulário
-        titulo = dados_emprestimo['titulo']
+        data_emprestimo = dados_emprestimo['data_emprestimo']
         data_devolucao = dados_emprestimo["data_devolucao"]
         livro_id = dados_emprestimo["livro_id"]
         usuario_id = dados_emprestimo["usuario_id"]
 
-        emprestimo.titulo = titulo
+        emprestimo.titulo = data_emprestimo
         emprestimo.data_devolucao = data_devolucao
         emprestimo.livro_id = livro_id
         emprestimo.usuario_id = usuario_id
 
         # Save changes to the database
-        emprestimo.save()
+        emprestimo.save(db_session)
+
         return jsonify({"mensagem": "emprestimo atualizado com sucesso!"})
     except ValueError:
         return jsonify({"mensagem": "Formato inválido."}), 400
     except TypeError:
         return jsonify({'result': 'Error. Integrity Error (faltam informações ou informações corretas) '}), 400
     except Exception as e:
-        return jsonify({"mensagem": str(e)}), 500
+        return jsonify({"mensagem": str(f"erro no {e}")}), 500
     finally:
         db_session.close()
 
@@ -453,7 +454,7 @@ def deletar_emprestimo(id_emprestimo):
     try:
         var_emprestimo = select(Emprestimo).where(Emprestimo.id_emprestimo == id_emprestimo)
         var_emprestimo = db_session.execute(var_emprestimo).scalar()
-        var_emprestimo.delete()
+        var_emprestimo.delete(db_session)
 
         return jsonify({"mensagem": "emprestimo deletado com sucesso!"})
     except ValueError:
