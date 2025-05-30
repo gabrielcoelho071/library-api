@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, redirect
 from flask_pydantic_spec import FlaskPydanticSpec
 from sqlalchemy.exc import IntegrityError
 
-from models import *
+from models_local import *
 from sqlalchemy import select
 
 app = Flask(__name__)
@@ -20,7 +20,7 @@ def index():
     """
     return redirect('/livros')
 @app.route('/livros', methods=['POST'])
-def cadastrar_livro():
+def post_livro():
     """
             Cadastrar livros
 
@@ -66,7 +66,7 @@ def cadastrar_livro():
         return jsonify({"mensagem": "formato invalido"})
 
 @app.route('/livros', methods=['GET'])
-def listar_livro():
+def get_livro():
     """
             Consultar livros
 
@@ -102,7 +102,7 @@ def listar_livro():
 
 
 @app.route('/livros/<int:id_livro>', methods=['PUT'])
-def editar_livro(id_livro):
+def put_livro(id_livro):
     """
             Editar livros
 
@@ -151,7 +151,7 @@ def editar_livro(id_livro):
         db_session.close()
 
 @app.route('/livros/<int:id_livro>', methods=['DELETE'])
-def deletar_livro(id_livro):
+def delete_livro(id_livro):
     db_session = local_session()
     try:
         var_livro = select(Livro).where(Livro.id_livro == id_livro)
@@ -168,7 +168,7 @@ def deletar_livro(id_livro):
         db_session.close()
 
 @app.route('/usuarios', methods=['POST'])
-def cadastrar_usuario():
+def post_usuario():
     """
         Cadastrar usuario
 
@@ -209,7 +209,7 @@ def cadastrar_usuario():
         db_session.close()
 
 @app.route('/usuarios', methods=['GET'])
-def listar_usuario():
+def get_usuario():
     """
         Consultar emprestimos
 
@@ -234,7 +234,7 @@ def listar_usuario():
 
 
 @app.route('/usuarios/<int:id_usuario>', methods=['PUT'])
-def editar_usuario(id_usuario):
+def put_usuario(id_usuario):
     """
             Editar usuarios
 
@@ -281,7 +281,7 @@ def editar_usuario(id_usuario):
         db_session.close()
 
 @app.route('/usuarios/<int:id_usuario>', methods=['DELETE'])
-def deletar_usuario(id_usuario):
+def delete_usuario(id_usuario):
     db_session = local_session()
     try:
         var_usuario = select(Usuario).where(Usuario.id_usuario == id_usuario)
@@ -299,7 +299,7 @@ def deletar_usuario(id_usuario):
         db_session.close()
 
 @app.route('/emprestimos', methods=['POST'])
-def cadastrar_emprestimo():
+def post_emprestimo():
     """
             Cadastrar emprestimos
 
@@ -367,7 +367,7 @@ def cadastrar_emprestimo():
 
 
 @app.route('/emprestimos', methods=['GET'])
-def listar_emprestimo():
+def get_emprestimo():
     """
             Consultar emprestimos
 
@@ -398,7 +398,7 @@ def listar_emprestimo():
 
 
 @app.route('/emprestimos/<int:id_emprestimo>', methods=['PUT'])
-def editar_emprestimo(id_emprestimo):
+def put_emprestimo(id_emprestimo):
     """
             Editar emprestimos
 
@@ -449,7 +449,7 @@ def editar_emprestimo(id_emprestimo):
 
 
 @app.route('/emprestimos/<int:id_emprestimo>', methods=['DELETE'])
-def deletar_emprestimo(id_emprestimo):
+def delete_emprestimo(id_emprestimo):
     db_session = local_session()
     try:
         var_emprestimo = select(Emprestimo).where(Emprestimo.id_emprestimo == id_emprestimo)
