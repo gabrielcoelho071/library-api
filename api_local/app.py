@@ -95,7 +95,24 @@ def main(page: ft.Page):
                                             ],
                                         ),
                                     ),
-
+                                    ft.OutlinedButton(
+                                        width=320,
+                                        height=50,
+                                        content=ft.Row(
+                                            [
+                                                ft.Icon(name=ft.Icons.ACCOUNT_BOX, color="blue"),
+                                                ft.Text("Sign in with Facebook"),
+                                            ],
+                                        ),
+                                    ),
+                                    ft.Row(
+                                        [
+                                            ft.Text("Don't have an account?"),
+                                            ft.TextButton("Sign up")
+                                        ],
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        spacing=-4
+                                    )
                                 ],
                                 alignment=ft.MainAxisAlignment.CENTER,
                                 horizontal_alignment=ft.CrossAxisAlignment.START

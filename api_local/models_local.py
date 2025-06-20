@@ -50,6 +50,7 @@ class Usuario(Base):
     __tablename__ = 'usuarios'
     id_usuario = Column(Integer, primary_key=True)
     nome = Column(String, nullable=False)
+    email = Column(String, nullable=False)
     CPF = Column(String, nullable=False, unique=True)
     endereco = Column(String)
 
